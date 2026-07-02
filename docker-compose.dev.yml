@@ -5,6 +5,9 @@ services:
   dispatcher:
     restart: no
 
+  ldes-client:
+    restart: no
+
   resource:
     restart: no
 

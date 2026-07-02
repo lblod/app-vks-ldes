@@ -24,7 +24,26 @@ services:
       - "logging=true"
     logging: *default-logging
 
-  # Your extra services here
+  ldes-client:
+    build: https://github.com/lblod/ldes-client.git#feat/fancy-error-handling
+    restart: always
+    volumes:
+      - ./config/ldes-client:/config
+    environment:
+      RUN_AT_STARTUP: true
+      DELAY: 1000
+      CRON_PATTERN: "*/1 * * * *"
+      CRON_RETRIES: 5
+      DIRECT_DATABASE_CONNECTION: "http://triplestore:8890/sparql"
+      GRAPH_STORE_URL: "http://triplestore:8890/sparql-graph-crud"
+      RANDOMIZE_GRAPHS: "true"
+      BATCH_SIZE: 100
+      AWV_BASE: "https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1"
+      AWV_FIRST_PAGE: "https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page"
+    logging: *default-logging
+    labels:
+      - "logging=true"
+
   resource:
     image: semtech/mu-cl-resources:1.27.2
     restart: always
