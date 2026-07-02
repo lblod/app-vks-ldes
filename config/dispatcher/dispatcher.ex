@@ -5,21 +5,18 @@ defmodule Dispatcher do
     json: [ "application/json", "application/vnd.api+json" ]
   ]
 
-  @any %{}
+  # @any %{}
   @json %{ accept: %{ json: true } }
-  @html %{ accept: %{ html: true } }
+  # @html %{ accept: %{ html: true } }
 
   define_layers [ :static, :services, :fall_back, :not_found ]
 
-  # In order to forward the 'themes' resource to the
-  # resource service, use the following forward rule:
-  #
-  # match "/themes/*path", @json do
-  #   Proxy.forward conn, path, "http://resource/themes/"
-  # end
-  #
-  # Run `docker-compose restart dispatcher` after updating
-  # this file.
+  get "/ar-designs/*path", @json do
+    forward conn, path, "http://vks/ar-designs/"
+  end
+  get "/measure-concepts/*path", @json do
+    forward conn, path, "http://vks/measure-concepts/"
+  end
 
   match "/*_", %{ layer: :not_found } do
     send_resp( conn, 404, "Route not found.  See config/dispatcher.ex" )

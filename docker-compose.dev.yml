@@ -8,6 +8,9 @@ services:
   ldes-client:
     restart: no
 
+  vks:
+    restart: no
+
   resource:
     restart: no
 
