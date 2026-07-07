@@ -5,6 +5,9 @@ services:
   dispatcher:
     restart: no
 
+  vendor-login:
+    restart: no
+
   ldes-client:
     restart: no
 
