@@ -19,6 +19,11 @@ services:
 
   migrations:
     restart: no
+    volumes:
+      # DISABLE ON FIRST RUN
+      # These migrations set up a test user and fix the loop in the TEI VKS LDES. This should be
+      # commented out when running from a clean DB
+      - ./config/dev-migrations:/data/migrations/dev
 
   delta-notifier:
     restart: no
