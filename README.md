@@ -80,3 +80,7 @@ Once this is the case, follow these steps:
 - 'Up' the migrations service to run the dev migrations: `docker compose up migrations`
 - Once the migration has run (which can be verified with the above query), start the ldes-client: `docker compose up ldes-client`
 - The syncing should then continue as normal
+
+There are similar migrations for the dev feed.
+The relevant stopping points can be found by looking at the `fix-dev-ldes-infinite-loop` migrations.
+At the first stopping point, enable the dev-migrations and at the second, copy the second migration from config/additional-dev-migrations.
