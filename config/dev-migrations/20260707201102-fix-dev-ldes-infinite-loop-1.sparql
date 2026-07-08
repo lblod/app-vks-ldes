@@ -10,8 +10,9 @@ DELETE {
 } WHERE {
   GRAPH <http://mu.semte.ch/graphs/awv/ldes/status> {
      ?sub ext:LDESState ?obj .
-  } values ?obj {
-    """{"lastTime":"2026-06-16T08:47:07.006Z","lastTimeCount":"0","currentPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=187","nextPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=c97c4f27-4e70-44cc-8be8-1d5297a67c4f"}"""
-    """{"lastTime":"2026-06-16T08:47:07.006Z","lastTimeCount":"0","currentPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=c97c4f27-4e70-44cc-8be8-1d5297a67c4f","nextPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=187"}"""
   }
+  FILTER(
+    CONTAINS(?obj, """"currentPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=187","nextPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=c97c4f27-4e70-44cc-8be8-1d5297a67c4f""")
+    || CONTAINS(?obj, """"currentPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=c97c4f27-4e70-44cc-8be8-1d5297a67c4f","nextPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=187""")
+  )
 }
