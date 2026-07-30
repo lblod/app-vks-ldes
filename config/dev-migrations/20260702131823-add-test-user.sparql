@@ -1,0 +1,13 @@
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX muAccount: <http://mu.semte.ch/vocabularies/account/>
+INSERT DATA {
+  GRAPH <http://mu.semte.ch/graphs/private> {
+     <http://data.lblod.info/foaf/agent/id/d44c7ea0-dc5f-43b2-ad10-e281a8aa646c> a foaf:Agent, ext:Vendor ;
+        muAccount:keyHash """$argon2id$v=19$m=16,t=2,p=1$dGVzdHRlc3Q$aME57ODlq+maIRv0ouzcLA""" ;
+	muAccount:canActOnBehalfOf <http://data.lblod.info/id/bestuurseenheden/974816591f269bb7d74aa1720922651529f3d3b2a787f5c60b73e5a0384950a4> ;
+        foaf:name """Test""" ;
+        mu:uuid """d44c7ea0-dc5f-43b2-ad10-e281a8aa646c""" .
+  }
+}

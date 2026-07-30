@@ -1,0 +1,18 @@
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+DELETE {
+  GRAPH <http://mu.semte.ch/graphs/awv/ldes/status> {
+    ?sub ext:LDESState ?obj.
+  }
+} INSERT {
+  GRAPH <http://mu.semte.ch/graphs/awv/ldes/status> {
+    ?sub ext:LDESState """{"lastTime":"2026-02-26T10:25:16.545Z","lastTimeCount":"0","currentPage":"https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=93","nextPage":"https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=01858b83-86a8-466e-9f90-7c969b20ec31"}""" .
+  }
+} WHERE {
+  GRAPH <http://mu.semte.ch/graphs/awv/ldes/status> {
+     ?sub ext:LDESState ?obj .
+  }
+  FILTER(
+    CONTAINS(?obj, """"currentPage":"https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=01858b83-86a8-466e-9f90-7c969b20ec31","nextPage":"https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=171beb63-a850-45e4-afcd-6cecbe3d90ca""")
+    || CONTAINS(?obj, """"currentPage":"https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=171beb63-a850-45e4-afcd-6cecbe3d90ca","nextPage":"https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=01858b83-86a8-466e-9f90-7c969b20ec31""")
+  )
+}

@@ -1,30 +1,86 @@
-# mu-project
+# VKS LDES vendor environment
 
-Bootstrap a mu.semte.ch microservices environment in three easy steps.
+A hosted instance of the [VKS design service](https://github.com/lblod/vks-design-service/),
+taking data from the relevant LDES feed and making it available to vendors for integrating into their software.
 
-## Quickstart an mu-project
+## API documentation
 
-> [INFO]
-> This project was created by running `mu project new awesome-project-name`.  If read on GitHub under mu-semtech/mu-project then it is the template repository for a new project, use `mu project new` instead.
+### Vendor authentication
 
-Setting up your environment is done in three easy steps:
-1. First configure the running microservices and their names in `docker-compose.yml`
-2. Then, configure how requests are dispatched in `config/dispatcher.ex`
-3. Lastly, simply start the docker-compose.
+Access to this service is controlled by an API key per vendor.
+A login request with a valid key provides a cookie which can be used for further requests.
+The ['ar-design' plugin](https://github.com/lblod/frontend-embeddable-notule-editor/blob/master/docs/plugins/ar-design-plugin.md)
+of the @lblod/embeddable-say-editor expects data in the same form as the `/ar-design` endpoint provides.
 
-### Hooking things up with docker-compose
+#### POST /login
 
-Alter the `docker-compose.yml` file so it contains all microservices you need.  The example content should be clear, but you can find more information in the [Docker Compose documentation](https://docs.docker.com/compose/).  Don't remove the `identifier` and `db` container, they are respectively the entry-point and the database of your application.  Don't forget to link the necessary microservices to the dispatcher and the database to the microservices.
+The `/login` endpoint expects a `POST` whose body is a JSON of the form:
 
-### Configure the dispatcher
+```json
+{
+  "organization": "http://data.lblod.info/id/bestuurseenheden/uri-of-bestuurseenheid",
+  "publisher": {
+    "uri": "http://data.lblod.info/foaf/agent/id/agent-uri",
+    "key": "secret-api-key"
+  }
+}
+```
 
-Next, alter the file `config/dispatcher/dispatcher.ex` based on the example that is there by default.  Dispatch requests to the necessary microservices based on the names you used for the microservice.
+#### GET /ar-designs
 
-### Boot up the system
+This lists the AR designs for the administrative unit (bestuurseenheid) that the cookie sent with the request corresponds to.
 
-Boot your microservices-enabled system using docker-compose.
+## Development
 
-    cd /path/to/mu-project
-    docker-compose up
+For development, the `docker-compose.dev.yml` provides development-only migrations.
+Due to a problem with the VKS TEI LDES feed, these should not be run immediately, so this line of the compose config should be commented out when running from a fresh DB.
 
-You can shut down using `docker-compose stop` and remove everything using `docker-compose rm`.
+### Test users
+
+The dev migrations create an agent with the API key "test", linked to the unit "Aalst".
+The following JSON can be used to log in:
+
+```json
+{
+  "organization": "http://data.lblod.info/id/bestuurseenheden/974816591f269bb7d74aa1720922651529f3d3b2a787f5c60b73e5a0384950a4",
+  "publisher": {
+    "uri": "http://data.lblod.info/foaf/agent/id/d44c7ea0-dc5f-43b2-ad10-e281a8aa646c",
+    "key": "test"
+  }
+}
+```
+
+Further users can be created by copying and customising the migration used to create this user.
+Keys must be hashed using the Argon2id algorithm.
+
+### LDES infinite loop
+
+The dev migration will fix the loop in the LDES feed, but only when the faulty page(s) have been reached.
+The following query can be used to detect this:
+
+```sparql
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+SELECT ?state WHERE {
+  GRAPH <http://mu.semte.ch/graphs/awv/ldes/status> {
+    ?sub ext:LDESState ?state .
+  }
+}
+```
+
+If the JSON object that is returned has a `currentPage` field of
+`https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=01858b83-86a8-466e-9f90-7c969b20ec31`
+or
+`https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=171beb63-a850-45e4-afcd-6cecbe3d90ca`,
+then the correct pages have been reached.
+
+Once this is the case, follow these steps:
+
+- Stop the ldes client: `docker compose stop ldes-client`
+- Uncomment the previously commented volume config from docker-compose.dev.yml
+- 'Up' the migrations service to run the dev migrations: `docker compose up migrations`
+- Once the migration has run (which can be verified with the above query), start the ldes-client: `docker compose up ldes-client`
+- The syncing should then continue as normal
+
+There are similar migrations for the dev feed.
+The relevant stopping points can be found by looking at the `fix-dev-ldes-infinite-loop` migrations.
+At the first stopping point, enable the dev-migrations and at the second, copy the second migration from config/additional-dev-migrations.

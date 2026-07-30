@@ -1,0 +1,20 @@
+# Copy to dev-migrations when syncing the dev AVW feed and it gets stuck on the loop below
+# Not included to avoid it running before it is relevant
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+DELETE {
+  GRAPH <http://mu.semte.ch/graphs/awv/ldes/status> {
+    ?sub ext:LDESState ?obj.
+  }
+} INSERT {
+  GRAPH <http://mu.semte.ch/graphs/awv/ldes/status> {
+    ?sub ext:LDESState """{"lastTime":"2026-06-16T08:47:08.394Z","lastTimeCount":"0","currentPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=194","nextPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=94328867-cf18-4d1c-81be-b1d41fccd71a"}""" .
+  }
+} WHERE {
+  GRAPH <http://mu.semte.ch/graphs/awv/ldes/status> {
+     ?sub ext:LDESState ?obj .
+  }
+  FILTER(
+    CONTAINS(?obj, """"currentPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=192","nextPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=94328867-cf18-4d1c-81be-b1d41fccd71a""")
+    || CONTAINS(?obj, """"currentPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=94328867-cf18-4d1c-81be-b1d41fccd71a","nextPage":"https://services.apps-dev.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page?pageNumber=192""")
+  )
+}

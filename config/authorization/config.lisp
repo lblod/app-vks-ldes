@@ -19,6 +19,8 @@
 ;;; prefix types
 (in-package :type-cache)
 
+; This setting isn't strictly necessary as we don't currently access session information outside of
+; sudo queries, but is here in case we need it in the future.
 (add-type-for-prefix "http://mu.semte.ch/sessions/" "http://mu.semte.ch/vocabularies/session/Session") ; each session URI will be handled for updates as if it had this mussession:Session type
 
 ;;;;;;;;;;;;;;;;;
@@ -38,6 +40,8 @@
   :session "http://mu.semte.ch/vocabularies/session/"
   :ext "http://mu.semte.ch/vocabularies/ext/"
   ;; Custom prefix URIs here, prefix casing is ignored
+  :besluit "http://data.vlaanderen.be/ns/besluit#"
+  :musession "http://mu.semte.ch/vocabularies/session/"
   )
 
 
@@ -51,37 +55,34 @@
 ;; indexes.
 
 (define-graph public ("http://mu.semte.ch/graphs/public")
-  (_ -> _)) ; public allows ANY TYPE -> ANY PREDICATE in the direction
-            ; of the arrow
+  ("besluit:Bestuurseenheid" -> _)
+)
 
-;; Example:
-;; (define-graph company ("http://mu.semte.ch/graphs/companies/")
-;;   ("foaf:OnlineAccount"
-;;    -> "foaf:accountName"
-;;    -> "foaf:accountServiceHomepage")
-;;   ("foaf:Group"
-;;    -> "foaf:name"
-;;    -> "foaf:member"))
-
+; We don't define the "http://mu.semte.ch/graphs/private" graph here as there is no non-sudo access
+; to that graph
 
 ;;;;;;;;;;;;;
 ;; User roles
 
 (supply-allowed-group "public")
 
-(grant (read write)
+; vendor-login-service puts session information in the same graph as it finds account information,
+; so we can't use a separate session graph without modifying that service. This is left here in case
+; it is needed in the future.
+; (supply-allowed-group "agent"
+;   :parameters ()
+;   :query "PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+;           PREFIX muAccount: <http://mu.semte.ch/vocabularies/account/>
+;           SELECT DISTINCT * WHERE {
+;             <SESSION_ID> muAccount:account ?account ;
+;                          muAccount:canActOnBehalfOf ?adminUnit .
+;             ?account a foaf:Agent .
+;           }"
+; )
+; (grant (read)
+;        :to-graph session-graph
+;        :for-allowed-group "agent")
+
+(grant (read)
        :to-graph public
        :for-allowed-group "public")
-
-;; example:
-
-;; (supply-allowed-group "company"
-;;   :query "PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
-;;           SELECT DISTINCT ?uuid WHERE {
-;;             <SESSION_ID> ext:belongsToCompany/mu:uuid ?uuid
-;;           }"
-;;   :parameters ("uuid"))
-
-;; (grant (read write)
-;;        :to company
-;;        :for "company")

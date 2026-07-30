@@ -8,6 +8,7 @@ x-logging:
 services:
   identifier:
     image: semtech/mu-identifier:1.11.0
+    restart: always
     environment:
       SESSION_COOKIE_SECURE: "on"
     labels:
@@ -16,15 +17,54 @@ services:
 
   dispatcher:
     image: semtech/mu-dispatcher:2.1.1
+    restart: always
     volumes:
       - ./config/dispatcher:/config
     labels:
       - "logging=true"
     logging: *default-logging
 
-  # Your extra services here
+  vendor-login:
+    image: lblod/vendor-login-service:1.4.2-rc.2
+    restart: always
+    environment:
+      REMOVE_ALL_SESSIONS_ON_LOGIN: true
+      REMOVE_ALL_SESSIONS_ON_LOGOUT: true
+      USE_HASHED_KEY: true
+    labels:
+      - "logging=true"
+    logging: *default-logging
+
+  ldes-client:
+    build: https://github.com/lblod/ldes-client.git#feat/fancy-error-handling
+    restart: always
+    volumes:
+      - ./config/ldes-client:/config
+    environment:
+      RUN_AT_STARTUP: true
+      DELAY: 1000
+      CRON_PATTERN: "*/1 * * * *"
+      CRON_RETRIES: 5
+      DIRECT_DATABASE_CONNECTION: "http://triplestore:8890/sparql"
+      GRAPH_STORE_URL: "http://triplestore:8890/sparql-graph-crud"
+      RANDOMIZE_GRAPHS: "true"
+      BATCH_SIZE: 100
+      AWV_BASE: "https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1"
+      AWV_FIRST_PAGE: "https://services.apps-tei.mow.vlaanderen.be/ldes-server/geplande-opstellingen-v1/by-page"
+    logging: *default-logging
+    labels:
+      - "logging=true"
+
+  vks:
+    image: lblod/vks-design-service:0.5.0
+    environment:
+      MOW_ENDPOINT: 'https://roadsigns.lblod.info/sparql'
+      ALLOW_MU_AUTH_SUDO: true
+      AUTH_CHECK_TYPE: agent
+
   resource:
     image: semtech/mu-cl-resources:1.27.2
+    restart: always
     volumes:
       - ./config/resources:/config
     labels:
@@ -33,6 +73,7 @@ services:
 
   migrations:
     image: semtech/mu-migrations-service:0.9.0
+    restart: always
     links:
       - triplestore:database
     environment:
@@ -45,6 +86,7 @@ services:
 
   delta-notifier:
     image: semtech/mu-delta-notifier:0.4.0
+    restart: always
     volumes:
       - ./config/delta:/config/
     labels:
@@ -53,6 +95,7 @@ services:
 
   database:
     image: semtech/sparql-parser:0.0.15
+    restart: always
     volumes:
       - ./config/authorization/:/config/
       - ./data/authorization/:/data/
@@ -62,6 +105,7 @@ services:
 
   triplestore:
     image: redpencil/virtuoso:1.4.0
+    restart: always
     environment:
       SPARQL_UPDATE: "true"
     volumes:

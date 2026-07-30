@@ -1,7 +1,37 @@
 services:
   identifier:
-    ports:
-      - "80:80"
+    restart: no
+
+  dispatcher:
+    restart: no
+
+  vendor-login:
+    restart: no
+
+  ldes-client:
+    restart: no
+
+  vks:
+    restart: no
+
+  resource:
+    restart: no
+
+  migrations:
+    restart: no
+    volumes:
+      # DISABLE ON FIRST RUN
+      # These migrations set up a test user and fix the loop in the TEI VKS LDES. This should be
+      # commented out when running from a clean DB
+      - ./config/dev-migrations:/data/migrations/dev
+
+  delta-notifier:
+    restart: no
+
+  database:
+    restart: no
+
   triplestore:
-    ports:
-      - "8890:8890"
+    restart: no
+    environment:
+      ENABLE_CORS: true
