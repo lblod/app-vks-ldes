@@ -12,7 +12,7 @@ defmodule Dispatcher do
   define_layers [ :static, :services, :fall_back, :not_found ]
 
   ### Login
-  post "/login/*path", @json do
+  post "/vendor/login/*path", @json do
     Proxy.forward conn, path, "http://vendor-login/sessions"
   end
 
