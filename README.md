@@ -12,9 +12,9 @@ A login request with a valid key provides a cookie which can be used for further
 The ['ar-design' plugin](https://github.com/lblod/frontend-embeddable-notule-editor/blob/master/docs/plugins/ar-design-plugin.md)
 of the @lblod/embeddable-say-editor expects data in the same form as the `/ar-design` endpoint provides.
 
-#### POST /login
+#### POST /vendor/login
 
-The `/login` endpoint expects a `POST` whose body is a JSON of the form:
+The `/vendor/login` endpoint expects a `POST` whose body is a JSON of the form:
 
 ```json
 {
