@@ -16,7 +16,7 @@ defmodule Dispatcher do
     Proxy.forward conn, path, "http://vendor-login/sessions"
   end
 
-  delete "/logout" do
+  delete "/vendor/logout" do
     Proxy.forward conn, [], "http://vendor-login/sessions/current"
   end
 
