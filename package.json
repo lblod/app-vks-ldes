@@ -1,0 +1,23 @@
+{
+  "name": "app-vks-ldes",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "release": "release-it"
+  },
+  "author": "redpencil.io",
+  "license": "MIT",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.21.0",
+      "onFail": "download"
+    }
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^1.0.0",
+    "@changesets/cli": "^3.0.1",
+    "changesets-release-it-plugin": "^0.2.0",
+    "release-it": "^21.0.2"
+  }
+}
