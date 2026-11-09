@@ -61,7 +61,10 @@ services:
       MOW_ENDPOINT: 'https://roadsigns.lblod.info/sparql'
       ALLOW_MU_AUTH_SUDO: true
       AUTH_CHECK_TYPE: agent
-
+    restart: always     
+    labels:
+      - "logging=true"
+    logging: *default-logging
   resource:
     image: semtech/mu-cl-resources:1.27.2
     restart: always
