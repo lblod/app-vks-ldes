@@ -1,5 +1,11 @@
 # app-vks-ldes
 
+## 1.0.4
+
+### Patch Changes
+
+- [`ba10b20`](https://github.com/lblod/app-vks-ldes/commit/ba10b2021e0464f6e49d329d4722219b88e8961f) Thanks [@elpoelma](https://github.com/elpoelma)! - Update `vks` service to version [0.5.2](https://github.com/lblod/vks-design-service/releases/tag/v0.5.2)
+
 ## 1.0.3
 
 ### Patch Changes
