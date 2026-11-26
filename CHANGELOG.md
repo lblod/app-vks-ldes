@@ -1,5 +1,11 @@
 # app-vks-ldes
 
+## 1.0.3
+
+### Patch Changes
+
+- [`0388f30`](https://github.com/lblod/app-vks-ldes/commit/0388f3011dc0658a65d1eec9f55c6c34efe24bac) Thanks [@abeforgit](https://github.com/abeforgit)! - Bump vks design service to [0.5.1](https://github.com/lblod/vks-design-service/releases/tag/v0.5.1)
+
 ## 1.0.2
 
 ### Patch Changes
